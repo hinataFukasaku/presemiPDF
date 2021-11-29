@@ -1,0 +1,177 @@
+---
+title: "プレゼミ参考資料"
+author: "著者：久米ゼミ3年 深作 輝多"
+date: "最終更新日:`r format(Sys.time(), '%Y年 %B %d日') ` "
+output:
+  html_document:
+    highlight: espresso
+    theme: readable
+    toc: yes
+    toc_depth: 4
+    
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, 
+                      echo = TRUE, 
+                      message = FALSE,
+                      cashe = TRUE,
+                      tidy = TRUE,
+                      fig.width = 7,
+                      fig.height = 4)
+```
+
+# ファイルの読み書き 
+
+```{r, eval = FALSE}
+
+read_csv("ファイル.csv")
+write.csv(df,"df.csv",row.names = FALSE)
+```
+
+## 文字化け対策
+
+```{r,eval = FALSE}
+read_csv("data/data_utf8.csv", locale = locale(encoding = "utf8"))
+#元のコード名を記入
+write.csv(df,"df.csv",fileEncoding="CP932",row.names = FALSE)
+#CP932はShift-Jis
+```
+
+
+# 散布図を描く
+```{r}
+head(iris)
+```
+
+### 標準関数
+
+```{r}
+plot(iris$Sepal.Length,iris$Sepal.Width)
+```
+
+#### 名前付け
+```{r}
+plot(iris$Sepal.Length,iris$Sepal.Width,xlab="X軸名前",ylab="Y軸名前",main="タイトル")
+
+##県名とか載せたくなったら
+label<-iris$Species
+plot(iris$Sepal.Length,iris$Sepal.Width,xlab="X軸名前",ylab="Y軸名前",main="タイトル",type="n")
+text(iris$Sepal.Length,iris$Sepal.Width,xlab="X軸名前",ylab="Y軸名前",main="タイトル",label)
+```
+
+
+
+## ggplots
+```{r}
+#ggplotsは綺麗な図を書くための外部パッケージです
+```
+
+
+### ライブラリ読み込み
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(patchwork)
+library(ggrepel)
+```
+
+
+### 基本の散布図
+```{r}
+g0<-ggplot(iris,aes(Sepal.Length,Sepal.Width))+
+  geom_point()
+g0
+```
+
+
+### 名前を付けよう
+```{r}
+g0_1<-g0+labs(title = "タイトル",
+              x="X軸名前",
+              y="Y軸名前")
+g0_1
+
+
+g0_T<-g0_1+
+  geom_text_repel(aes(label=Species),size=3)
+g0_L<-g0_1+
+  geom_label_repel(aes(label=Species),size=3)
+g0_T+g0_L
+
+#追加項目：それっぽい枠に
+g0_cla<-g0_1+theme_classic()
+g0_cla
+```
+
+### 種類で色分け
+```{r}
+g1<-ggplot(iris,aes(Sepal.Length,Sepal.Width,colour=Species))+
+  geom_point()
+g1
+
+#追加項目：それっぽい枠に
+g1_cla<-g1+theme_classic()
+g1_cla
+```
+
+### 回帰直線を付与
+```{r}
+g1_1<-g1+
+  geom_smooth(method = lm,se=F,colour="black")
+g1_1
+```
+
+# 基本統計量と回帰分析
+
+```{r}
+matome<-summary(iris)
+matome
+```
+
+### 見やすい統計表の作成
+
+```{r}
+library(stargazer)
+stargazer(iris,median=TRUE,type="text",
+          title = "タイトル",
+          covariate.labels = c("A","B","C","D"))
+```
+
+
+## 回帰分析
+```{r}
+ols1<-lm(iris$Sepal.Length~iris$Sepal.Width)
+ols2<-update(ols1,~.+iris$Petal.Length)
+ols3<-update(ols2,~.+iris$Petal.Width)
+```
+
+### 回帰分析の出力
+
+```{r}
+stargazer(ols1,ols2,ols3,type="text",
+          dep.var.caption = "",
+          title="タイトル",
+          dep.var.labels=c("従属変数名"),
+          covariate.labels = c("独立変数1",
+                               "統制変数1",
+                               "統制変数2",
+                               "定数"),
+          out="C:/Users/fukasaku/Documents/大学/ゼミ/ファイル名.html")
+```
+
+
+
+### 回帰分析のチェック
+```{r}
+#多重共線性の確認 10を超えたらその変数を削除しよう！
+library(car)
+vif(ols3)
+```
+
+## 補足事項 **グラフのあれこれを加筆予定**
+
+
+
+```
+
