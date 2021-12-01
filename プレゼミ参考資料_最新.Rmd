@@ -106,20 +106,20 @@ g0_cla
 
 ### 種類で色分け
 ```{r}
-g1<-ggplot(iris,aes(Sepal.Length,Sepal.Width,colour=Species))+
+g01<-ggplot(iris,aes(Sepal.Length,Sepal.Width,colour=Species))+
   geom_point()
-g1
+g01
 
 #追加項目：それっぽい枠に
-g1_cla<-g1+theme_classic()
-g1_cla
+g01_cla<-g01+theme_classic()
+g01_cla
 ```
 
 ### 回帰直線を付与
 ```{r}
-g1_1<-g1+
+g01_1<-g01+
   geom_smooth(method = lm,se=F,colour="black")
-g1_1
+g01_1
 ```
 
 # 基本統計量と回帰分析
@@ -171,7 +171,67 @@ vif(ols3)
 
 ## 補足事項 **グラフのあれこれを加筆予定**
 
+### 1変数グラフ
 
+```{r}
+#導入
+g1<-ggplot(iris,aes(x=Sepal.Length))+
+  theme_classic()
+```
+
+
+
+#### ヒストグラム
+```{r}
+g1_hist<-g1+geom_histogram()
+g1_hist
+```
+
+
+
+### 2変数グラフ(1ヵ国)
+
+
+<li>ここからCSVのダウンロード<br><a href="https://drive.google.com/file/d/1GsynIGGdGTJLMGBouuD5MsgLvbPkIt_h/view">
+GDPデータ</a>
+
+```{r}
+#導入
+df<-read.csv("GDPpercapita.csv")
+library(tidyverse)
+Japan<-df %>% 
+  filter(Country == "Japan")
+head(Japan)
+gJap<-ggplot(data=Japan,aes(x=Year,y=GDP,group=1))
 
 ```
 
+#### 折れ線グラフ
+```{r}
+gJap_line<-gJap+
+  geom_line()
+gJap_line
+```
+
+#### 棒グラフ
+```{r}
+gJap_bar<-gJap+
+  geom_bar(stat = "identity")
+gJap_bar
+
+#色つけ
+gJap_bar_color<-gJap+
+  geom_bar(stat = "identity", fill = "lightblue")
+gJap_bar_color
+```
+
+#### 散布図
+```{r}
+gJap_point<-gJap+
+  geom_point()
+gJap_point
+```
+
+
+
+### 2変数グラフ(2ヵ国以上)(今後追記)
