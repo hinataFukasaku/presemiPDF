@@ -40,18 +40,20 @@ write.csv(df,"df.csv",fileEncoding="CP932",row.names = FALSE)
 
 
 # 散布図を描く
-```{r}
+
+```{r 散布図1}
 head(iris)
 ```
 
 ### 標準関数
 
-```{r}
+```{r 標準関数}
 plot(iris$Sepal.Length,iris$Sepal.Width)
 ```
 
 #### 名前付け
-```{r}
+
+```{r 名前付け}
 plot(iris$Sepal.Length,iris$Sepal.Width,xlab="X軸名前",ylab="Y軸名前",main="タイトル")
 
 ##県名とか載せたくなったら
@@ -63,30 +65,30 @@ text(iris$Sepal.Length,iris$Sepal.Width,xlab="X軸名前",ylab="Y軸名前",main
 
 
 ## ggplots
-```{r}
+```{r ggplots}
 #ggplotsは綺麗な図を書くための外部パッケージです
 ```
 
 
 ### ライブラリ読み込み
-```{r}
+```{r ライブラリ}
 library(ggplot2)
 library(ggthemes)
 library(patchwork)
 library(ggrepel)
 ```
 
-
 ### 基本の散布図
-```{r}
+
+```{r gg散布図}
 g0<-ggplot(iris,aes(Sepal.Length,Sepal.Width))+
   geom_point()
 g0
 ```
 
-
 ### 名前を付けよう
-```{r}
+
+```{r gg名前付け}
 g0_1<-g0+labs(title = "タイトル",
               x="X軸名前",
               y="Y軸名前")
@@ -105,7 +107,8 @@ g0_cla
 ```
 
 ### 種類で色分け
-```{r}
+
+```{r gg色分け}
 g01<-ggplot(iris,aes(Sepal.Length,Sepal.Width,colour=Species))+
   geom_point()
 g01
@@ -116,7 +119,8 @@ g01_cla
 ```
 
 ### 回帰直線を付与
-```{r}
+
+```{r gg回帰直線}
 g01_1<-g01+
   geom_smooth(method = lm,se=F,colour="black")
 g01_1
@@ -124,23 +128,22 @@ g01_1
 
 # 基本統計量と回帰分析
 
-```{r}
+```{r 基本統計量}
 matome<-summary(iris)
 matome
 ```
 
 ### 見やすい統計表の作成
 
-```{r}
+```{r stargazer}
 library(stargazer)
 stargazer(iris,median=TRUE,type="text",
           title = "タイトル",
           covariate.labels = c("A","B","C","D"))
 ```
 
-
 ## 回帰分析
-```{r}
+```{r 回帰分析}
 ols1<-lm(iris$Sepal.Length~iris$Sepal.Width)
 ols2<-update(ols1,~.+iris$Petal.Length)
 ols3<-update(ols2,~.+iris$Petal.Width)
@@ -148,7 +151,7 @@ ols3<-update(ols2,~.+iris$Petal.Width)
 
 ### 回帰分析の出力
 
-```{r}
+```{r 回帰分析の出力}
 stargazer(ols1,ols2,ols3,type="text",
           dep.var.caption = "",
           title="タイトル",
@@ -160,10 +163,9 @@ stargazer(ols1,ols2,ols3,type="text",
           out="C:/Users/fukasaku/Documents/大学/ゼミ/ファイル名.html")
 ```
 
-
-
 ### 回帰分析のチェック
-```{r}
+
+```{r 回帰分析のチェック}
 #多重共線性の確認 10を超えたらその変数を削除しよう！
 library(car)
 vif(ols3)
@@ -173,48 +175,48 @@ vif(ols3)
 
 ### 1変数グラフ
 
-```{r}
+```{r }
 #導入
 g1<-ggplot(iris,aes(x=Sepal.Length))+
   theme_classic()
 ```
 
-
-
 #### ヒストグラム
-```{r}
+
+```{r ヒストグラム}
 g1_hist<-g1+geom_histogram()
 g1_hist
 ```
 
 
-
 ### 2変数グラフ(1ヵ国)
-
 
 <li>ここからCSVのダウンロード<br><a href="https://drive.google.com/file/d/1GsynIGGdGTJLMGBouuD5MsgLvbPkIt_h/view">
 GDPデータ</a>
 
-```{r}
+```{r }
 #導入
 df<-read.csv("GDPpercapita.csv")
 library(tidyverse)
 Japan<-df %>% 
   filter(Country == "Japan")
 head(Japan)
-gJap<-ggplot(data=Japan,aes(x=Year,y=GDP,group=1))
+gJap<-ggplot(data=Japan,aes(x=Year,y=GDP,group=1))+
+    theme_classic()
 
 ```
 
 #### 折れ線グラフ
-```{r}
+
+```{r 折れ線グラフ1}
 gJap_line<-gJap+
   geom_line()
 gJap_line
 ```
 
 #### 棒グラフ
-```{r}
+
+```{r 棒グラフ1}
 gJap_bar<-gJap+
   geom_bar(stat = "identity")
 gJap_bar
@@ -226,7 +228,8 @@ gJap_bar_color
 ```
 
 #### 散布図
-```{r}
+
+```{r 散布図2}
 gJap_point<-gJap+
   geom_point()
 gJap_point
@@ -234,4 +237,46 @@ gJap_point
 
 
 
-### 2変数グラフ(2ヵ国以上)(今後追記)
+### 2変数グラフ(2ヵ国以上)
+
+```{r }
+#導入
+Japan_America<- df %>% 
+  filter(Country == "Japan"|Country=="United States")
+head(Japan_America)
+gJap_USA<-ggplot(data=Japan_America,aes(x= Year,y= GDP,fill= Country))+
+    theme_classic()
+```
+#### 折れ線グラフ
+
+```{r 折れ線グラフ2}
+gJap_USA<-ggplot(data=Japan_America,aes(x=Year,y=GDP,
+                                        color=Country,group=Country))+
+    theme_classic()
+gJap_USA_line<-gJap_USA+
+  geom_line()
+gJap_USA_line
+```
+
+#### 棒グラフ
+
+```{r 棒グラフ2}
+gJap_USA<-ggplot(data=Japan_America,aes(x= Year,y= GDP,fill= Country))+
+    theme_classic()
+gJap_USA_bar<-gJap_USA+
+  geom_bar(stat = "identity",position="dodge")
+gJap_USA_bar
+```
+
+#### 散布図
+
+```{r 散布図3}
+gJap_USA<-ggplot(data=Japan_America,aes(x= Year,y= GDP,color= Country))+
+    theme_classic()
+gJap_USA_point<-gJap_USA+
+  geom_point()
+gJap_USA_point
+```
+
+
+
